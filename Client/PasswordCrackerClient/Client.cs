@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace PasswordCrackerClient
 {
-    class Program
+    class Client
     {
-        static void Main(string[] args)
-        {
-        }
+
     }
 }
