@@ -8,7 +8,7 @@ namespace PasswordCrackerClient
     {
         static void Main(string[] args)
         {
-            TcpClient clientSocket = new TcpClient("localhost", 6789);
+            TcpClient clientSocket = new TcpClient("192.168.43.46", 6789);
 
             Stream ns = clientSocket.GetStream();
             StreamWriter sw = new StreamWriter(ns);
