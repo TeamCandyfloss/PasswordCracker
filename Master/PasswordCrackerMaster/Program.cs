@@ -13,22 +13,25 @@ namespace PasswordCrackerMaster
         static void Main(string[] args)
         {
           
-            TcpListener serverSocket = new TcpListener(6789);
-
             //TcpListener serverSocket = new TcpListener(6789);
-            serverSocket.Start();
-            Console.WriteLine("Server activated now");  
+
+            ////TcpListener serverSocket = new TcpListener(6789);
+            //serverSocket.Start();
+            //Console.WriteLine("Server activated now");  
 
 
-            while (true)
-            {
+            //while (true)
+            //{
 
-                TcpClient connectionSocket = serverSocket.AcceptTcpClient();
-                Console.WriteLine("Client Connected");
-                MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
+            //    TcpClient connectionSocket = serverSocket.AcceptTcpClient();
+            //    Console.WriteLine("Client Connected");
+            //    MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
                 
-                Task.Factory.StartNew(() => service.Start());
-            }
+            //    Task.Factory.StartNew(() => service.Start());
+            //}
+
+
+            FileChunkBalancer testCHunk = new FileChunkBalancer("","passwords.txt");
         }
     }
 }
