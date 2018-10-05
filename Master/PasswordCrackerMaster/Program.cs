@@ -31,7 +31,7 @@ namespace PasswordCrackerMaster
             //}
 
 
-            FileChunkBalancer testCHunk = new FileChunkBalancer("","passwords.txt");
+            FileChunkBalancer testCHunk = new FileChunkBalancer("webster.txt");
         }
     }
 }

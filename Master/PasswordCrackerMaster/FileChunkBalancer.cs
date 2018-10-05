@@ -6,32 +6,34 @@ namespace PasswordCrackerMaster
 {
     public class FileChunkBalancer
     {
-        private List<string> Passwords = new List<string>();
-        public FileChunkBalancer(string dictionaryPath, string passwordPath)
+        private List<string> PasswordsWithUsers = new List<string>();
+        public FileChunkBalancer(string dictionaryPath)
         {
-            using (FileStream fs = new FileStream(passwordPath, FileMode.Open, FileAccess.Read))
+            using (FileStream fs = new FileStream(dictionaryPath, FileMode.Open, FileAccess.Read))
             {
                 using (StreamReader ReadingStream = new StreamReader(fs))
                 {
                     while (!ReadingStream.EndOfStream)
                     {
                         string Entry = ReadingStream.ReadLine();
+                        
+                      
+                            PasswordsWithUsers.Add(Entry);
 
-                        string[] allPasswords = Entry.Split(' ');
-                        foreach (var word in allPasswords)
-                        {
-                            Passwords.Add(word);
-                            Console.WriteLine(word);
-                        }
 
-                       
+
 
                     }
+                    Console.WriteLine(PasswordsWithUsers[1]);
+                    Console.WriteLine(PasswordsWithUsers[2]);
+                    Console.WriteLine(PasswordsWithUsers[3]);
 
-                    Console.WriteLine(Passwords.Count);
+                    Console.WriteLine(PasswordsWithUsers.Count);
                     Console.ReadLine();
                 }
             }
+
+          
         }
     }
 }
