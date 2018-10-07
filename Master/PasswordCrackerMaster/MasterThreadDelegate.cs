@@ -10,6 +10,7 @@ namespace PasswordCrackerMaster
 {
     class MasterThreadDelegate
     {
+
         private TcpClient _connectionSocket;
         public MasterThreadDelegate(TcpClient connectionSocket)
         {
@@ -35,14 +36,21 @@ namespace PasswordCrackerMaster
             while (message != null && message != "")
             {
 
+                if (message == "1")
+                {
+                    sw.WriteLine(FileChunkBalancer.GetChunk(10000)); 
+                }
                 Console.WriteLine("Client: " + message);
-                answer = message.ToUpper();
-                sw.WriteLine(answer);
+                message = "99999";
                 message = sr.ReadLine();
+
 
             }
             ns.Close();
             _connectionSocket.Close();
         }
+
+
     }
+
 }

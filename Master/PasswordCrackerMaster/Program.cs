@@ -12,26 +12,23 @@ namespace PasswordCrackerMaster
     {
         static void Main(string[] args)
         {
-          
+
+            TcpListener serverSocket = new TcpListener(6789);
+
             //TcpListener serverSocket = new TcpListener(6789);
-
-            ////TcpListener serverSocket = new TcpListener(6789);
-            //serverSocket.Start();
-            //Console.WriteLine("Server activated now");  
+            serverSocket.Start();
+            Console.WriteLine("Server activated now");
 
 
-            //while (true)
-            //{
-
-            //    TcpClient connectionSocket = serverSocket.AcceptTcpClient();
-            //    Console.WriteLine("Client Connected");
-            //    MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
+            while (true)
+            {
                 
-            //    Task.Factory.StartNew(() => service.Start());
-            //}
+                TcpClient connectionSocket = serverSocket.AcceptTcpClient();
+                Console.WriteLine("Client Connected");
+                MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
 
-
-            FileChunkBalancer testCHunk = new FileChunkBalancer("webster.txt");
+                Task.Factory.StartNew(() => service.Start());
+            }          
         }
     }
 }
