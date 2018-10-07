@@ -49,11 +49,9 @@ namespace PasswordCrackerMaster
 
                 if (message == "3")
                 {
-                    DataToSend data = new DataToSend();
-                    data.Dictionary = new Dictionary<string, string>();
-                    var formatter = new BinaryFormatter();
-
-                    formatter.Serialize(ns, data);
+                    DataToSend data = new DataToSend(ns);
+                    data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                   
                 }
                 Console.WriteLine("Client: " + message);
                 message = "99999";

@@ -34,7 +34,7 @@ namespace PasswordCrackerMaster
             {
                 long totalWords = WordList.Count;
                 bool changeToWordCurrentScanningWasMade = false;
-                // Så længe  der flere ord at skanne og de ord der tilgængelige ikke overskrider mulige ord at hente
+                // Så længe  der flere ord at skanne og de ord der tilgængelige ikke overskrider mulige ord at hente.
                 if (_currentlyScanning < totalWords && _currentlyScanning + amountOfWords < totalWords)
                 {
                     changeToWordCurrentScanningWasMade = true;
