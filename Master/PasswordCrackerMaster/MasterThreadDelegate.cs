@@ -32,27 +32,27 @@ namespace PasswordCrackerMaster
             StreamWriter sw = new StreamWriter(ns);
             sw.AutoFlush = true; // enable automatic flushing
 
-            string message = sr.ReadLine();
-            string answer = "";
+            string message = " ";
             while (message != null && message != "")
             {
                 message = sr.ReadLine();
-                if (message == "1")
+                switch (message)
                 {
-                    sw.WriteLine(FileChunkBalancer.GetChunk(10000));
-                }
-                if (message == "2")
-                {
-                    sw.WriteLine(FileChunkBalancer.GetChunk(10000));
-                    sw.WriteLine();
+                    case "1":
+                        Console.WriteLine("case 1");
+                        sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                        break;
+                    case "2":
+                        Console.WriteLine("case 2");
+                        sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                        break;
+                    case "3":
+                        Console.WriteLine("case 3");
+                        DataToSend data = new DataToSend(ns);
+                        data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        break;
                 }
 
-                if (message == "3")
-                {
-                    DataToSend data = new DataToSend(ns);
-                    data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
-                   
-                }
                 Console.WriteLine("Client: " + message);
                 message = "99999";
                 
