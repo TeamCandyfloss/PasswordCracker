@@ -35,14 +35,19 @@ namespace PasswordCrackerMaster
             string answer = "";
             while (message != null && message != "")
             {
-
+                message = sr.ReadLine();
                 if (message == "1")
                 {
-                    sw.WriteLine(FileChunkBalancer.GetChunk(10000)); 
+                    sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                }
+                if (message == "2")
+                {
+                    sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                    sw.WriteLine();
                 }
                 Console.WriteLine("Client: " + message);
                 message = "99999";
-                message = sr.ReadLine();
+                
 
 
             }
