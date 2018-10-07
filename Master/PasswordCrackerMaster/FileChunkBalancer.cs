@@ -16,11 +16,11 @@ namespace PasswordCrackerMaster
         {
             using (FileStream fs = new FileStream(_dictionaryPath, FileMode.Open, FileAccess.Read))
             {
-                using (StreamReader ReadingStream = new StreamReader(fs))
+                using (StreamReader readingStream = new StreamReader(fs))
                 {
-                    while (!ReadingStream.EndOfStream)
+                    while (!readingStream.EndOfStream)
                     {
-                        string Entry = ReadingStream.ReadLine();
+                        string Entry = readingStream.ReadLine();
 
                         WordList.Add(Entry);
                     }
@@ -28,22 +28,29 @@ namespace PasswordCrackerMaster
             }
         }
 
-        public static string GetChunk(int AmountOfWords)
+        public static string GetChunk(int amountOfWords)
         {
             lock (_chunckLock)
             {
-                long TotalWords = WordList.Count;
-
+                long totalWords = WordList.Count;
+                bool changeToWordCurrentScanningWasMade = false;
                 // Så længe  der flere ord at skanne og de ord der tilgængelige ikke overskrider mulige ord at hente
-                if (_currentlyScanning < TotalWords && _currentlyScanning + AmountOfWords < TotalWords)
+                if (_currentlyScanning < totalWords && _currentlyScanning + amountOfWords < totalWords)
                 {
-                    return $"{_currentlyScanning} {_currentlyScanning + AmountOfWords}";
+                    changeToWordCurrentScanningWasMade = true;
+                    return $"{_currentlyScanning} {_currentlyScanning + amountOfWords}";
                 }
-                else if (_currentlyScanning < TotalWords && _currentlyScanning + AmountOfWords > TotalWords)
+                else if (_currentlyScanning < totalWords && _currentlyScanning + amountOfWords > totalWords)
                 {
-                    return $"{_currentlyScanning} {TotalWords - _currentlyScanning}";
+                    changeToWordCurrentScanningWasMade = true;
+                    return $"{_currentlyScanning} {totalWords - _currentlyScanning}";
                 }
 
+                if (changeToWordCurrentScanningWasMade)
+                {
+                    _currentlyScanning =+ amountOfWords;
+                }
+                
                 return null;
             }
         }

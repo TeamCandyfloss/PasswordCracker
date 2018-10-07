@@ -46,6 +46,15 @@ namespace PasswordCrackerMaster
                     sw.WriteLine(FileChunkBalancer.GetChunk(10000));
                     sw.WriteLine();
                 }
+
+                if (message == "3")
+                {
+                    DataToSend data = new DataToSend();
+                    data.Dictionary = new Dictionary<string, string>();
+                    var formatter = new BinaryFormatter();
+
+                    formatter.Serialize(ns, data);
+                }
                 Console.WriteLine("Client: " + message);
                 message = "99999";
                 
