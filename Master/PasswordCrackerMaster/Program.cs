@@ -31,6 +31,7 @@ namespace PasswordCrackerMaster
             //}
             
             PasswordFileHandler p = new PasswordFileHandler("Passwords.txt");
+            p.GetHashes();
         }
     }
 }

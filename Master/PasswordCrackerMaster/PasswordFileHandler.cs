@@ -6,7 +6,7 @@ namespace PasswordCrackerMaster
 {
     public class PasswordFileHandler
     {
-        private Dictionary<string,string> HashesKVP;
+        private Dictionary<string,string> HashesKVP = new Dictionary<string, string>();
         public PasswordFileHandler(string PasswordFilePath)
         {
             
@@ -27,12 +27,9 @@ namespace PasswordCrackerMaster
 
         }
 
-        public void GetHashes()
+        public Dictionary<string, string> GetHashes()
         {
-            foreach (var k in HashesKVP)
-            {
-                Console.WriteLine(k.Value +" " + k.Key);
-            }
+            return HashesKVP;
         }
     }
 }
