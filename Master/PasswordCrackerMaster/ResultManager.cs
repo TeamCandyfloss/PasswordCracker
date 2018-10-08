@@ -9,26 +9,30 @@ namespace PasswordCrackerMaster
         private static Dictionary<string, string> _results = new Dictionary<string, string>();
        private static PasswordFileHandler _passwords = new PasswordFileHandler("password.txt");
        private static Stopwatch _stopwatch = new Stopwatch();
+        private static object ResultLock = new object();
 
         static ResultManager()
         {
             _stopwatch.Start();
         }
 
-        static void AddResult(Dictionary<string, string> partialResult)
+         public static void AddResult(Dictionary<string, string> partialResult)
         {
-            foreach (var kvp in partialResult)
+            lock (ResultLock)
             {
-                _results.Add(kvp.Key,kvp.Value);
-            }
+                foreach (var kvp in partialResult)
+                {
+                    _results.Add(kvp.Key, kvp.Value);
+                }
 
-            if (_results.Count ==_passwords.GetHashes().Count)
-            {
-                _stopwatch.Stop();
+                if (_results.Count == _passwords.GetHashes().Count)
+                {
+                    _stopwatch.Stop();
+                }
             }
         }
 
-        static void ShowResult()
+        public static void ShowResult()
         {
             foreach (var kvp in _results)
             {

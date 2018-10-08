@@ -53,8 +53,10 @@ namespace PasswordCrackerMaster
                         data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
                         break;
                     case "200":
+                        //bruges hvis en client har fundet et password, hvorefter det blive tilføjet til passwordlisten.
                         BinaryFormatter formater = new BinaryFormatter();
-                        Dictionary<string, string> s = (Dictionary<string, string>) formater.Deserialize(ns);
+                        Dictionary<string, string> partialResult = (Dictionary<string, string>) formater.Deserialize(ns);
+                        ResultManager.AddResult(partialResult);
                         break;
                 }
 
