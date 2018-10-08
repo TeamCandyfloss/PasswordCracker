@@ -7,6 +7,7 @@ namespace PasswordCrackerMaster
 {
     public static class FileChunkBalancer
     {
+        // chunkLock bruges til at låse metoden GetChunk så der ikke er 2 tråde der tilgår metoden samtidig
         private static readonly object _chunckLock = new object();
         private static int _currentlyScanning = 0;
         private static string _dictionaryPath = "webster.txt";
