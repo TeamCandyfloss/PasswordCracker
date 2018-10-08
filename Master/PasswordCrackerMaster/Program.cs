@@ -24,7 +24,6 @@ namespace PasswordCrackerMaster
 
             while (true)
             {
-
                 TcpClient connectionSocket = serverSocket.AcceptTcpClient();
                 Console.WriteLine("Client Connected");
                 MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);

@@ -46,10 +46,15 @@ namespace PasswordCrackerMaster
                         Console.WriteLine("case 2");
                         sw.WriteLine(FileChunkBalancer.GetChunk(10000));
                         break;
+                    // case 3 sender in dictionary af hashes af hvem der ejer dem.
                     case "3":
                         Console.WriteLine("case 3");
                         DataToSend data = new DataToSend(ns);
                         data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        break;
+                    case "200":
+                        BinaryFormatter formater = new BinaryFormatter();
+                        Dictionary<string, string> s = (Dictionary<string, string>) formater.Deserialize(ns);
                         break;
                 }
 
