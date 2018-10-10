@@ -4,7 +4,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using PasswordCrackerClient.model;
 
 namespace PasswordCrackerClient
 {
@@ -17,16 +16,15 @@ namespace PasswordCrackerClient
         {
             _wordDic = dic;
             _interval = interval;
-            StartCrack();
         }
 
-        public void StartCrack()
+        public async Task StartCrack()
         {
 
 
             Console.WriteLine("vi skal hanse den");
-            CheckNormalWord("flower", _wordDic);
-            
+            await CheckNormalWord("Flower", _wordDic);
+
 
         }
 
@@ -43,20 +41,24 @@ namespace PasswordCrackerClient
 
         }
 
-        private Dictionary<string, string> CheckSingleWord(Dictionary<string, string> users, string possiblePassword)
+        private  Dictionary<string, string> CheckSingleWord(Dictionary<string, string> users, string possiblePassword)
         {
-            Console.WriteLine("check single");
             Converter converter = new Converter();
             Dictionary<string, string> Result = new Dictionary<string, string>();
             foreach (var user in users)
             {
-                Task<bool> compared = CompareBytes(converter.ToByte(user.Value), converter.Sha1Convert(possiblePassword));
-                compared.Wait();
-                if (compared.Result)
+                byte[] userShaByte = converter.ToByte(user.Value);
+                byte[] possiblePasswordShaByte = converter.ToByte(possiblePassword);
+                byte[] testshit = converter.ConvertSha1(possiblePasswordShaByte);
+
+                bool compared = CompareBytes(userShaByte, testshit);
+                if (compared)
                 {
                     Result.Add(user.Key,possiblePassword);
+                    Console.WriteLine($"added {user.Value}");
                     return Result;
                 }
+
                 
             }
 
@@ -64,9 +66,8 @@ namespace PasswordCrackerClient
 
         }
 
-        private async Task<bool> CompareBytes(byte[] userValue, byte[] toByte)
+        private  bool CompareBytes(byte[] userValue, byte[] toByte)
         {
-            Console.WriteLine("compare");
             lock (_CompareLock)
             {
 

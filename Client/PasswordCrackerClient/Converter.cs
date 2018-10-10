@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 
 namespace PasswordCrackerClient
@@ -27,9 +28,18 @@ namespace PasswordCrackerClient
 
         public byte[] ToByte(string ConvertMePlease)
         {
-             byte[] converted = Convert.FromBase64String(ConvertMePlease);
-            return converted;
+            char[] charArray;
+            charArray = ConvertMePlease.ToCharArray();
+            byte[] bytearray = Array.ConvertAll(charArray, Convert.ToByte);
+            return bytearray;
         }
+
+        public byte[] ConvertSha1(byte[] password)
+        {
+            return sha1.ComputeHash(password);
+        }
+
+
 
         public byte[] Sha1Convert(string password)
         {
