@@ -14,7 +14,7 @@ namespace PasswordCrackerMaster
     {
         static void Main(string[] args)
         {
-
+            
             TcpListener serverSocket = new TcpListener(6789);
 
             //TcpListener serverSocket = new TcpListener(6789);
@@ -26,10 +26,13 @@ namespace PasswordCrackerMaster
             while (true)
             {
                 TcpClient connectionSocket = serverSocket.AcceptTcpClient();
-                Console.WriteLine("Client Connected");
+                
+                Console.WriteLine($"{LogHandler.GetUsers()} connected");
                 MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
 
                 Task.Factory.StartNew(() => service.Start());
+               
+
             }
 
 

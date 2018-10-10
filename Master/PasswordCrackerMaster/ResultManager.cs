@@ -4,16 +4,18 @@ using System.Diagnostics;
 
 namespace PasswordCrackerMaster
 {
+    /// <summary>
+    /// Samler resulter fra clienten.
+    /// </summary>
     static class ResultManager
     {
         private static Dictionary<string, string> _results = new Dictionary<string, string>();
-       private static PasswordFileHandler _passwords = new PasswordFileHandler("password.txt");
-       private static Stopwatch _stopwatch = new Stopwatch();
+        private static PasswordFileHandler _passwords = new PasswordFileHandler("password.txt");
         private static object ResultLock = new object();
 
         static ResultManager()
         {
-            _stopwatch.Start();
+           
         }
 
          public static void AddResult(Dictionary<string, string> partialResult)
@@ -27,7 +29,7 @@ namespace PasswordCrackerMaster
 
                 if (_results.Count == _passwords.GetHashes().Count)
                 {
-                    _stopwatch.Stop();
+                    LogHandler.StopStopWatch();
                 }
             }
         }
@@ -39,7 +41,7 @@ namespace PasswordCrackerMaster
                 Console.WriteLine(kvp.Key, kvp.Value);
             }
 
-            Console.WriteLine($"Der blev fundet {_results.Count} passwords du af {_passwords.GetHashes().Count} tilgængelige hashes. på {_stopwatch.Elapsed} ");
+            Console.WriteLine($"Der blev fundet {_results.Count} passwords du af {_passwords.GetHashes().Count} tilgængelige hashes. på {LogHandler.Stopwatch().Elapsed} ");
         }
 
         

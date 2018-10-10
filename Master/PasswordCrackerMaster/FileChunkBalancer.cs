@@ -4,7 +4,9 @@ using System.IO;
 using System.Security.AccessControl;
 
 namespace PasswordCrackerMaster
-{
+{/// <summary>
+/// Giver et interval af ord der skal skannes.
+/// </summary>
     public static class FileChunkBalancer
     {
         // chunkLock bruges til at låse metoden GetChunk så der ikke er 2 tråde der tilgår metoden samtidig
@@ -28,38 +30,40 @@ namespace PasswordCrackerMaster
                 }
             }
         }
-
+        /// <summary>
+        /// Gets an interval seperated by a space, amountOfWords is the interval of words to be scanned.
+        /// </summary>
+        /// <param name="amountOfWords"></param>
+        /// <returns></returns>
         public static string GetChunk(int amountOfWords)
         {
             lock (_chunckLock)
             {
                 long totalWords = WordList.Count;
-                bool changeToWordCurrentScanningWasMade = false;
                 // Så længe  der flere ord at skanne og de ord der tilgængelige ikke overskrider mulige ord at hente.
                 if (_currentlyScanning < totalWords && _currentlyScanning + amountOfWords < totalWords)
                 {
-                    changeToWordCurrentScanningWasMade = true;
-                    return $"{_currentlyScanning} {_currentlyScanning + amountOfWords}";
+                    return $"{_currentlyScanning} {_currentlyScanning += amountOfWords}";
                 }
                 else if (_currentlyScanning < totalWords && _currentlyScanning + amountOfWords > totalWords)
                 {
-                    changeToWordCurrentScanningWasMade = true;
                     return $"{_currentlyScanning} {totalWords - _currentlyScanning}";
                 }
 
-                if (changeToWordCurrentScanningWasMade)
-                {
-                    _currentlyScanning =+ amountOfWords;
-                }
-                
+               
+                // TODO throw exception - ikke flere ord
                 return null;
             }
         }
-
+        /// <summary>
+        /// ændre pathen til OrdListen
+        /// </summary>
         public static string SetDictionaryPath
         {
             set => _dictionaryPath = value;
         }
+
+       
     }
 
 }

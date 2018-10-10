@@ -18,7 +18,6 @@ namespace PasswordCrackerMaster
 
 
         }
-        //public Dictionary<string,string> Dictionary { get => _dictionaryToSend; }
 
         /// <summary>
         /// Data der bliver sendt skal have et [Serializable] TAG før klassen hvis det en custom class for at kunne sendes.  Næsten alle .Net klasser kan sendes uden ændringer.
