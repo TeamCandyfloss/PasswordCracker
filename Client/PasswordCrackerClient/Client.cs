@@ -1,16 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PasswordCrackerClient
 {
-    class Client
+    public class Client
     {
+        private bool _moreWork = true;
+        private bool _isWorking = false;
+        private TcpClient clientSocket;
+        private Stream networkStream;
+        private StreamWriter streamWriter;
+        private StreamReader streamReader;
+
         void RequestWork(int resultCode)
         {
-            //TODO: Implement code here.
+
+        }
+
+        public void Create(string ip, int port)
+        {
+            clientSocket = new TcpClient(ip, port);
+
+            networkStream = clientSocket.GetStream();
+            streamWriter = new StreamWriter(networkStream);
+
+            streamWriter.AutoFlush = true;
+            streamReader = new StreamReader(networkStream);
+
+            _isWorking = true;
+
+            Handshake();
+            
+        }
+
+        public void Handshake()
+        {
+            streamWriter.WriteLine("1");
+            string serverResponse = streamReader.ReadLine();
+            string[] unsplitString = serverResponse.Split(' ');
+
+            string fromRange = unsplitString[0];
+            string toRange = unsplitString[1];
+
+            Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
+
+            if (!_moreWork)
+            {
+                _isWorking = false;
+                networkStream.Close();
+                clientSocket.Close();
+            }
         }
 
         void CheckHash(string[] wordList, string[] passwords)
