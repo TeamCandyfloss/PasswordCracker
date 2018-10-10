@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PasswordCrackerMaster
@@ -13,6 +14,7 @@ namespace PasswordCrackerMaster
     {
 
         private TcpClient _connectionSocket;
+        private int _interval = 10000;
         public MasterThreadDelegate(TcpClient connectionSocket)
         {
 
@@ -40,11 +42,14 @@ namespace PasswordCrackerMaster
                 {
                     case "1":
                         Console.WriteLine("case 1");
-                        sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                        sw.WriteLine(FileChunkBalancer.GetChunk(_interval));
+                        LogHandler.SetGivenValue(_interval.ToString());
+                        Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()}");
                         break;
                     case "2":
                         Console.WriteLine("case 2");
-                        sw.WriteLine(FileChunkBalancer.GetChunk(10000));
+                        LogHandler.DisconnectedUser();
+                        Console.WriteLine($"{Thread.CurrentThread.Name} Disconnected");
                         break;
                     // case 3 sender in dictionary af hashes af hvem der ejer dem.
                     case "3":
