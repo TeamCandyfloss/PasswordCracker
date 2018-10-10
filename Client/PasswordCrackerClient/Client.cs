@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,13 +41,18 @@ namespace PasswordCrackerClient
 
         public void Handshake()
         {
-            streamWriter.WriteLine("1");
+            BinaryFormatter formater = new BinaryFormatter();
+            streamWriter.WriteLine("3");
+
             string serverResponse = streamReader.ReadLine();
             string[] unsplitString = serverResponse.Split(' ');
 
+            Dictionary<string, string> testdic = (Dictionary<string, string>) formater.Deserialize(networkStream);
+            Cracking test = new Cracking("0 10000", testdic);
+            test.StartCrack();
+
             string fromRange = unsplitString[0];
             string toRange = unsplitString[1];
-
             Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
 
             if (!_moreWork)

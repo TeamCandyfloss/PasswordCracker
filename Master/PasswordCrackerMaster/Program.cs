@@ -12,6 +12,7 @@ namespace PasswordCrackerMaster
 {
     class Program
     {
+        private static bool _StartTimer;
         static void Main(string[] args)
         {
             
@@ -31,6 +32,11 @@ namespace PasswordCrackerMaster
                 MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
 
                 Task.Factory.StartNew(() => service.Start());
+                if (_StartTimer)
+                {
+                    LogHandler.StartStopWatch();
+                    _StartTimer = false;
+                }
                
 
             }

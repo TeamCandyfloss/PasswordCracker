@@ -54,6 +54,7 @@ namespace PasswordCrackerMaster
                     // case 3 sender in dictionary af hashes af hvem der ejer dem.
                     case "3":
                         Console.WriteLine("case 3");
+                        sw.WriteLine("0 10000");
                         DataToSend data = new DataToSend(ns);
                         data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
                         break;
@@ -65,7 +66,7 @@ namespace PasswordCrackerMaster
                         break;
                 }
 
-                Console.WriteLine("Client: " + message);
+               
                 message = "99999";
                 
 

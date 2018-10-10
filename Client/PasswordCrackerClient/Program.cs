@@ -13,6 +13,7 @@ namespace PasswordCrackerClient
             client.Create("localhost", 6789);
 
             Console.ReadLine();
+
         }
     }
 }
