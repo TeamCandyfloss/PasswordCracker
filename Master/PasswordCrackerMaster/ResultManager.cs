@@ -10,7 +10,7 @@ namespace PasswordCrackerMaster
     static class ResultManager
     {
         private static Dictionary<string, string> _results = new Dictionary<string, string>();
-        private static PasswordFileHandler _passwords = new PasswordFileHandler("password.txt");
+        private static PasswordFileHandler _passwords = new PasswordFileHandler("passwords.txt");
         private static object ResultLock = new object();
 
         static ResultManager()

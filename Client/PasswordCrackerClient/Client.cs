@@ -19,6 +19,9 @@ namespace PasswordCrackerClient
         private StreamReader streamReader;
         private static string _dictionaryPath = "webster.txt";
         private static List<string> _wordList = new List<string>();
+        private ResultManager _resultManager = new ResultManager();
+        BinaryFormatter _formater = new BinaryFormatter();
+
 
         public Client()
         {
@@ -56,39 +59,60 @@ namespace PasswordCrackerClient
 
         public void Handshake()
         {
-            BinaryFormatter formater = new BinaryFormatter();
             streamWriter.WriteLine("1");
-
+            
             string serverResponse = streamReader.ReadLine();
             string[] unsplitString = serverResponse.Split(' ');
 
-            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>) formater.Deserialize(networkStream);
+            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)_formater.Deserialize(networkStream);
             
 
             string fromRange = unsplitString[0];
             string toRange = unsplitString[1];
             Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
 
-            Cracking test = new Cracking($"{fromRange} {toRange}", UsersToCrack, _wordList);
-            test.StartCrack();
+            Cracking cracker = new Cracking(_wordList);
+            Dictionary<string,string> partialResult = cracker.StartCrack($"{fromRange} {toRange}", UsersToCrack);
+            _resultManager.AddResultDic(partialResult);
+            if (_resultManager.GetPartialResult().Keys.Count != 0)
+            {
+                 SendResult();
+            }
+
+            RequestWork(cracker);
 
             if (serverResponse == "666")
             {
+                streamWriter.WriteLine("2");
                 _isWorking = false;
                 networkStream.Close();
                 clientSocket.Close();
             }
         }
 
-        void RequestWork(int resultCode)
+        void RequestWork(Cracking cracker)
         {
-          
+            BinaryFormatter formater = new BinaryFormatter();
+            // sender kode 3 for mere arbejde
+            streamWriter.WriteLine("3");
 
+            string serverResponse = streamReader.ReadLine();
+            string[] unsplitString = serverResponse.Split(' ');
+            string fromRange = unsplitString[0];
+            string toRange = unsplitString[1];
+            Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
+
+            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)formater.Deserialize(networkStream);
+
+            cracker.StartCrack($"{fromRange} {toRange}", UsersToCrack);
         }
 
         void SendResult()
         {
-            //TODO: Implement code here.
+            
+            streamWriter.WriteLine("200");
+           DataToSend data = new DataToSend(networkStream);
+            data.SendData(_resultManager.GetPartialResult());
         }
 
     }

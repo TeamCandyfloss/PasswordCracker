@@ -52,7 +52,7 @@ namespace PasswordCrackerMaster
 
                
                 // TODO throw exception - ikke flere ord
-                return null;
+                return "666";
             }
         }
         /// <summary>

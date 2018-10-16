@@ -61,10 +61,14 @@ namespace PasswordCrackerMaster
                         break;
                     // Når en client skal havde mere arbejde.
                     case "3":
-                        // TODO send mere arbejde hvis der er mere arbejde - check filechunk balancer
-                        Console.WriteLine("case 3");
-                        sw.WriteLine();
-                      
+                        Console.WriteLine("case 1");
+                        string interval1 = FileChunkBalancer.GetChunk(_interval);
+                        sw.WriteLine(interval1);
+                        DataToSend data1 = new DataToSend(ns);
+                        data1.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        LogHandler.SetGivenValue(interval1);
+                        Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()} currently {LogHandler.GetUsers()} users cracking");
+
                         break;
                     case "200":
                         //bruges hvis en client har fundet et password, hvorefter det blive tilføjet til passwordlisten.
