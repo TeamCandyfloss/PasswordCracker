@@ -14,11 +14,12 @@ namespace PasswordCrackerMaster
     {
 
         private TcpClient _connectionSocket;
-        private int _interval = 10000;
-        public MasterThreadDelegate(TcpClient connectionSocket)
+        private int _interval;
+        public MasterThreadDelegate(TcpClient connectionSocket, int interval)
         {
 
             _connectionSocket = connectionSocket;
+            _interval = interval;
 
         }
 
@@ -40,23 +41,30 @@ namespace PasswordCrackerMaster
                 message = sr.ReadLine();
                 switch (message)
                 {
+                    // start case når en client først connecter
                     case "1":
+                        LogHandler.ConnectedUser();
                         Console.WriteLine("case 1");
-                        sw.WriteLine(FileChunkBalancer.GetChunk(_interval));
-                        LogHandler.SetGivenValue(_interval.ToString());
-                        Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()}");
+                        string interval = FileChunkBalancer.GetChunk(_interval);
+                        sw.WriteLine(interval);
+                        DataToSend data = new DataToSend(ns);
+                        data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        LogHandler.SetGivenValue(interval);
+                        Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()} currently {LogHandler.GetUsers()} users cracking");
+                        // TODO Mulighvis ændre så clienter sender et navn i stedet for masteren tildeler tråde navne.
                         break;
+                    // når en client disconnecter
                     case "2":
                         Console.WriteLine("case 2");
                         LogHandler.DisconnectedUser();
-                        Console.WriteLine($"{Thread.CurrentThread.Name} Disconnected");
+                        Console.WriteLine($"{Thread.CurrentThread.Name} Disconnected {LogHandler.GetUsers()} left cracking");
                         break;
-                    // case 3 sender in dictionary af hashes af hvem der ejer dem.
+                    // Når en client skal havde mere arbejde.
                     case "3":
+                        // TODO send mere arbejde hvis der er mere arbejde - check filechunk balancer
                         Console.WriteLine("case 3");
-                        sw.WriteLine("0 10000");
-                        DataToSend data = new DataToSend(ns);
-                        data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        sw.WriteLine();
+                      
                         break;
                     case "200":
                         //bruges hvis en client har fundet et password, hvorefter det blive tilføjet til passwordlisten.
@@ -68,7 +76,7 @@ namespace PasswordCrackerMaster
 
                
                 message = "99999";
-                
+               
 
 
             }

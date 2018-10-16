@@ -17,11 +17,26 @@ namespace PasswordCrackerClient
         private Stream networkStream;
         private StreamWriter streamWriter;
         private StreamReader streamReader;
+        private static string _dictionaryPath = "webster.txt";
+        private static List<string> _wordList = new List<string>();
 
-        void RequestWork(int resultCode)
+        public Client()
         {
+            // læser Ordbogen og gemmer den i en local variable
+            using (FileStream fs = new FileStream(_dictionaryPath, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader readingStream = new StreamReader(fs))
+                {
+                    while (!readingStream.EndOfStream)
+                    {
+                        string Entry = readingStream.ReadLine();
 
+                        _wordList.Add(Entry);
+                    }
+                }
+            }
         }
+        
 
         public void Create(string ip, int port)
         {
@@ -42,20 +57,22 @@ namespace PasswordCrackerClient
         public void Handshake()
         {
             BinaryFormatter formater = new BinaryFormatter();
-            streamWriter.WriteLine("3");
+            streamWriter.WriteLine("1");
 
             string serverResponse = streamReader.ReadLine();
             string[] unsplitString = serverResponse.Split(' ');
 
-            Dictionary<string, string> testdic = (Dictionary<string, string>) formater.Deserialize(networkStream);
-            Cracking test = new Cracking("0 10000", testdic);
-            test.StartCrack();
+            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>) formater.Deserialize(networkStream);
+            
 
             string fromRange = unsplitString[0];
             string toRange = unsplitString[1];
             Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
 
-            if (!_moreWork)
+            Cracking test = new Cracking($"{fromRange} {toRange}", UsersToCrack, _wordList);
+            test.StartCrack();
+
+            if (serverResponse == "666")
             {
                 _isWorking = false;
                 networkStream.Close();
@@ -63,14 +80,10 @@ namespace PasswordCrackerClient
             }
         }
 
-        void CheckHash(string[] wordList, string[] passwords)
+        void RequestWork(int resultCode)
         {
-            //TODO: Implement code here. 
-        }
+          
 
-        void ReconstructHash(Byte[] hash)
-        {
-            //TODO: Implement code here.
         }
 
         void SendResult()

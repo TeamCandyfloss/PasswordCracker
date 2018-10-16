@@ -41,9 +41,9 @@ namespace PasswordCrackerClient
 
 
 
-        public byte[] Sha1Convert(string password)
+        public byte[] Base64Decrypter(string password)
         {
-            return sha1.ComputeHash(ToByte(password));
+            return Convert.FromBase64String(password);
         }
     }
 }

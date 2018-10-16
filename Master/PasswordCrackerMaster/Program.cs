@@ -29,7 +29,7 @@ namespace PasswordCrackerMaster
                 TcpClient connectionSocket = serverSocket.AcceptTcpClient();
                 
                 Console.WriteLine($"{LogHandler.GetUsers()} connected");
-                MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket);
+                MasterThreadDelegate service = new MasterThreadDelegate(connectionSocket, 10000);
 
                 Task.Factory.StartNew(() => service.Start());
                 if (_StartTimer)

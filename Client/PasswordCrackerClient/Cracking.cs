@@ -9,61 +9,151 @@ namespace PasswordCrackerClient
 {
     public class Cracking
     {
-        private Dictionary<string, string> _wordDic;
-        private string _interval = "";
+        private Dictionary<string, string> _UsersToCrack;
+        private string[] _interval;
+        
         object _CompareLock = new object();
-        public Cracking(string interval, Dictionary<string, string> dic)
+        private List<string> _wordList;
+
+        public Cracking(string interval, Dictionary<string, string> UsersToCrack, List<string> WordList)
         {
-            _wordDic = dic;
-            _interval = interval;
+            _UsersToCrack = UsersToCrack;
+            _interval = interval.Split(' ');
+            _wordList = WordList;
         }
 
         public async Task StartCrack()
         {
-
+            // extracte de ord inden for det interval der er givet og kommer det i en ny liste.
+            List<string> listToCrack = _wordList.GetRange(Int32.Parse(_interval[0]), Int32.Parse(_interval[1]));
 
             Console.WriteLine("vi skal hanse den");
-            await CheckNormalWord("Flower", _wordDic);
 
-
-        }
-
-        private async Task<Dictionary<string, string>> CheckNormalWord(string entry, Dictionary<string, string> users)
-        {
-            Dictionary<string, string> results = new Dictionary<string, string>();
-            Console.WriteLine("check normal");
-
-            string possiblePassword = entry;
-            results = CheckSingleWord(users, possiblePassword);
-            
-            //lasses kode.
-            return results;
-
-        }
-
-        private  Dictionary<string, string> CheckSingleWord(Dictionary<string, string> users, string possiblePassword)
-        {
-            Converter converter = new Converter();
-            Dictionary<string, string> Result = new Dictionary<string, string>();
-            foreach (var user in users)
-            {
-                byte[] userShaByte = converter.ToByte(user.Value);
-                byte[] possiblePasswordShaByte = converter.ToByte(possiblePassword);
-                byte[] testshit = converter.ConvertSha1(possiblePasswordShaByte);
-
-                bool compared = CompareBytes(userShaByte, testshit);
-                if (compared)
-                {
-                    Result.Add(user.Key,possiblePassword);
-                    Console.WriteLine($"added {user.Value}");
-                    return Result;
-                }
-
+            //checker hver ord i listen igennem forskellige "filter"
+           
                 
+            Task doneNormal = CheckNormalWord(listToCrack, _UsersToCrack);
+            Task doneUpper = CheckUpperWord(listToCrack, _UsersToCrack);
+            Task doneCap = CheckCapitalWord(listToCrack, _UsersToCrack);
+            Task doneReverse = CheckReverseWord(listToCrack, _UsersToCrack);
+            Task doneStartDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
+            Task doneEndDigit = CheckEndDigitWord(listToCrack, _UsersToCrack);
+            Task doneStartEndDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
+
+            Task.WaitAll(doneNormal, doneUpper, doneCap, doneReverse, doneStartDigit, doneEndDigit, doneStartEndDigit);
+            
+            
+        }
+
+        private async Task CheckNormalWord(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                await Task.Run(() => CheckSingleWord(users, word));
+                Console.WriteLine($"check normal");
+            }
+           
+          
+        }
+
+        private async Task CheckUpperWord(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                Console.WriteLine($"check upper");
+                await Task.Run(() => CheckSingleWord(users, word.ToUpper()));
             }
 
-            return Result;
+        }
 
+        private async Task CheckCapitalWord(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                Console.WriteLine($"check cap");
+                string capatalizedEntry = StringUtil.Capitalize(word);
+                await Task.Run(() => CheckSingleWord(users, capatalizedEntry));
+            }
+           
+        }
+
+        private async Task CheckReverseWord(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                Console.WriteLine($"check rev");
+                string reversedEntry = StringUtil.Reverse(word);
+                await Task.Run(() => CheckSingleWord(users, reversedEntry));
+            }
+           
+        }
+
+        private async Task CheckEndDigitWord(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    string possiblePasswordEndDigit = word + i;
+                    await Task.Run(() => CheckSingleWord(users, possiblePasswordEndDigit));
+                }
+            }
+           
+        }
+        private async Task CheckStartDigit(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    string possiblePasswordStartDigit = i + word;
+                    await Task.Run(() => CheckSingleWord(users, possiblePasswordStartDigit));
+                }
+            }
+
+        }
+        private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
+        {
+            foreach (var word in WordList)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    for (int j = 0; j < 10; j++)
+                    {
+                        string possiblePasswordStartEndDigit = i + word + j;
+                        await Task.Run(() => CheckSingleWord(users, possiblePasswordStartEndDigit));
+                    }
+                }
+            }
+
+        }
+
+
+
+
+
+        private void CheckSingleWord(Dictionary<string, string> users, string possiblePassword)
+        {
+            Converter converter = new Converter();
+            foreach (var user in users)
+            {
+                byte[] userShaByte = converter.Base64Decrypter(user.Value);
+                byte[] possiblePasswordShaByte = converter.ToByte(possiblePassword);
+                byte[] passwordSha = converter.ConvertSha1(possiblePasswordShaByte);
+
+                // der kan skabes endnu en tråd her, så den kører comparen i en ny tråd hvergang istedet for at låse comparen. lad os teste det senere.
+                bool compared =  CompareBytes(userShaByte, passwordSha);
+                if (compared)
+                {
+                    
+                    ResultManager.AddResult(user.Key,possiblePassword);
+                    Console.WriteLine($"added {user.Value}");
+                   // return true;
+
+                }
+            }
+
+            // return false; ;
         }
 
         private  bool CompareBytes(byte[] userValue, byte[] toByte)
