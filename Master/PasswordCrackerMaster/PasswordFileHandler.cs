@@ -29,6 +29,13 @@ namespace PasswordCrackerMaster
 
         public Dictionary<string, string> GetHashes()
         {
+            foreach (var v in ResultManager.GetResults())
+            {
+                if (HashesKVP.ContainsKey(v.Key))
+                {
+                    HashesKVP.Remove(v.Key);
+                }
+            }
             return HashesKVP;
         }
     }

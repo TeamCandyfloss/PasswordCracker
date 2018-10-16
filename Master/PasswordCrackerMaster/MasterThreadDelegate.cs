@@ -15,6 +15,7 @@ namespace PasswordCrackerMaster
 
         private TcpClient _connectionSocket;
         private int _interval;
+        private PasswordFileHandler _passwordFileHandler = new PasswordFileHandler("passwords.txt");
         public MasterThreadDelegate(TcpClient connectionSocket, int interval)
         {
 
@@ -48,7 +49,7 @@ namespace PasswordCrackerMaster
                         string interval = FileChunkBalancer.GetChunk(_interval);
                         sw.WriteLine(interval);
                         DataToSend data = new DataToSend(ns);
-                        data.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        data.SendData(_passwordFileHandler.GetHashes());
                         LogHandler.SetGivenValue(interval);
                         Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()} currently {LogHandler.GetUsers()} users cracking");
                         // TODO Mulighvis ændre så clienter sender et navn i stedet for masteren tildeler tråde navne.
@@ -65,7 +66,7 @@ namespace PasswordCrackerMaster
                         string interval1 = FileChunkBalancer.GetChunk(_interval);
                         sw.WriteLine(interval1);
                         DataToSend data1 = new DataToSend(ns);
-                        data1.SendData(new PasswordFileHandler("passwords.txt").GetHashes());
+                        data1.SendData(_passwordFileHandler.GetHashes());
                         LogHandler.SetGivenValue(interval1);
                         Console.WriteLine($"{Thread.CurrentThread.Name} is cracking interval {LogHandler.GetGivenValue()} currently {LogHandler.GetUsers()} users cracking");
 
@@ -75,6 +76,7 @@ namespace PasswordCrackerMaster
                         BinaryFormatter formater = new BinaryFormatter();
                         Dictionary<string, string> partialResult = (Dictionary<string, string>) formater.Deserialize(ns);
                         ResultManager.AddResult(partialResult);
+                        ResultManager.ShowResult();
                         break;
                 }
 

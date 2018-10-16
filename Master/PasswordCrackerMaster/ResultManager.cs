@@ -44,6 +44,11 @@ namespace PasswordCrackerMaster
             Console.WriteLine($"Der blev fundet {_results.Count} passwords du af {_passwords.GetHashes().Count} tilgængelige hashes. på {LogHandler.Stopwatch().Elapsed} ");
         }
 
+        public static Dictionary<string, string> GetResults()
+        {
+            return _results;
+        }
+
         
     }
 }
