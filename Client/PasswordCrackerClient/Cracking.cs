@@ -11,7 +11,9 @@ namespace PasswordCrackerClient
     {
         private Dictionary<string, string> _UsersToCrack;
         private string[] _interval;
-        
+        private ResultManager _resultManager;
+
+
         object _CompareLock = new object();
         private List<string> _wordList;
 
@@ -20,23 +22,19 @@ namespace PasswordCrackerClient
             _UsersToCrack = UsersToCrack;
             _interval = interval.Split(' ');
             _wordList = WordList;
+            _resultManager = new ResultManager();
         }
 
         public async Task StartCrack()
         {
             // nød til at lave en ny interval variable til GetRange metoden på listen, Se metode beskrivelse.
             int AmountOfElements = Int32.Parse(_interval[1]) - Int32.Parse(_interval[0]);
-
+            //variable får hvor vi skal starte at hente ord i ordlisten til den ordliste vi bruger til at cracke med.
             int startRange = Int32.Parse(_interval[0]);
             // extracte de ord inden for det interval der er givet og kommer det i en ny liste.
             List<string> listToCrack = _wordList.GetRange(startRange, AmountOfElements);
-            
-
-            Console.WriteLine("vi skal hanse den");
 
             //checker hver ord i listen igennem forskellige "filter"
-           
-                
             Task doneNormal = CheckNormalWord(listToCrack, _UsersToCrack);
             Task doneUpper = CheckUpperWord(listToCrack, _UsersToCrack);
             Task doneCap = CheckCapitalWord(listToCrack, _UsersToCrack);
@@ -46,28 +44,31 @@ namespace PasswordCrackerClient
             Task doneStartEndDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
 
             Task.WaitAll(doneNormal, doneUpper, doneCap, doneReverse, doneStartDigit, doneEndDigit, doneStartEndDigit);
-            
+
+            Console.WriteLine("er vi færdige?");
             
         }
 
         private async Task CheckNormalWord(List<string> WordList, Dictionary<string, string> users)
         {
             int test = 0;
+           
+
             foreach (var word in WordList)
             {
                 test++;
                 await Task.Run(() => CheckSingleWord(users, word));
-                Console.WriteLine($"check normal {test}");
+                // Console.WriteLine($"check normal {test}");
             }
-           
-          
+
+
         }
 
         private async Task CheckUpperWord(List<string> WordList, Dictionary<string, string> users)
         {
             foreach (var word in WordList)
             {
-                Console.WriteLine($"check upper");
+               // Console.WriteLine($"check upper");
                 await Task.Run(() => CheckSingleWord(users, word.ToUpper()));
             }
 
@@ -77,7 +78,7 @@ namespace PasswordCrackerClient
         {
             foreach (var word in WordList)
             {
-                Console.WriteLine($"check cap");
+                //Console.WriteLine($"check cap");
                 string capatalizedEntry = StringUtil.Capitalize(word);
                 await Task.Run(() => CheckSingleWord(users, capatalizedEntry));
             }
@@ -88,7 +89,7 @@ namespace PasswordCrackerClient
         {
             foreach (var word in WordList)
             {
-                Console.WriteLine($"check rev");
+                // Console.WriteLine($"check rev");
                 string reversedEntry = StringUtil.Reverse(word);
                 await Task.Run(() => CheckSingleWord(users, reversedEntry));
             }
@@ -153,7 +154,7 @@ namespace PasswordCrackerClient
                 if (compared)
                 {
                     
-                    ResultManager.AddResult(user.Key,possiblePassword);
+                    _resultManager.AddResult(user.Key,possiblePassword);
                     Console.WriteLine($"added {user.Value}");
                    // return true;
 
