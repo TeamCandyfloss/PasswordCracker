@@ -24,8 +24,13 @@ namespace PasswordCrackerClient
 
         public async Task StartCrack()
         {
+            // nød til at lave en ny interval variable til GetRange metoden på listen, Se metode beskrivelse.
+            int AmountOfElements = Int32.Parse(_interval[1]) - Int32.Parse(_interval[0]);
+
+            int startRange = Int32.Parse(_interval[0]);
             // extracte de ord inden for det interval der er givet og kommer det i en ny liste.
-            List<string> listToCrack = _wordList.GetRange(Int32.Parse(_interval[0]), Int32.Parse(_interval[1]));
+            List<string> listToCrack = _wordList.GetRange(startRange, AmountOfElements);
+            
 
             Console.WriteLine("vi skal hanse den");
 
@@ -47,10 +52,12 @@ namespace PasswordCrackerClient
 
         private async Task CheckNormalWord(List<string> WordList, Dictionary<string, string> users)
         {
+            int test = 0;
             foreach (var word in WordList)
             {
+                test++;
                 await Task.Run(() => CheckSingleWord(users, word));
-                Console.WriteLine($"check normal");
+                Console.WriteLine($"check normal {test}");
             }
            
           
