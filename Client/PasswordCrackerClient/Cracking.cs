@@ -26,6 +26,7 @@ namespace PasswordCrackerClient
 
         public Dictionary<string, string> StartCrack(string interval, Dictionary<string, string> UsersToCrack)
         {
+            _resultManager.ClearEntrys();
             _UsersToCrack = UsersToCrack;
             _interval = interval.Split(' ');
             // nød til at lave en ny interval variable til GetRange metoden på listen, Se metode beskrivelse.
@@ -42,9 +43,9 @@ namespace PasswordCrackerClient
             Task doneReverse = CheckReverseWord(listToCrack, _UsersToCrack);
             Task doneStartDigit = CheckStartDigit(listToCrack, _UsersToCrack);
             Task doneEndDigit = CheckEndDigitWord(listToCrack, _UsersToCrack);
-            Task doneStartEndDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
+            //Task doneStartEndDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
 
-            Task.WaitAll(doneNormal, doneUpper, doneCap, doneReverse, doneStartDigit, doneEndDigit, doneStartEndDigit);
+            Task.WaitAll(doneNormal, doneUpper, doneCap, doneReverse, doneStartDigit, doneEndDigit); //doneStartEndDigit);
 
             Console.WriteLine("er vi færdige?");
 
@@ -101,11 +102,14 @@ namespace PasswordCrackerClient
 
         private async Task CheckEndDigitWord(List<string> WordList, Dictionary<string, string> users)
         {
+            int test = 0;
             foreach (var word in WordList)
             {
                 for (int i = 0; i < 100; i++)
                 {
                     string possiblePasswordEndDigit = word + i;
+                    Console.WriteLine(test);
+                    test++;
                     await Task.Run(() => CheckSingleWord(users, possiblePasswordEndDigit));
                 }
             }
@@ -113,34 +117,37 @@ namespace PasswordCrackerClient
         }
         private async Task CheckStartDigit(List<string> WordList, Dictionary<string, string> users)
         {
+            int test = 0;
             foreach (var word in WordList)
             {
                 for (int i = 0; i < 100; i++)
                 {
+                    Console.WriteLine(test);
+                    test++;
                     string possiblePasswordStartDigit = i + word;
                     await Task.Run(() => CheckSingleWord(users, possiblePasswordStartDigit));
                 }
             }
 
         }
-        private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
-        {
-            int test = 0;
-            foreach (var word in WordList)
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    for (int j = 0; j < 10; j++)
-                    {
-                        string possiblePasswordStartEndDigit = i + word + j;
-                        Console.WriteLine($"check tal {test}");
-                        test++;
-                        await Task.Run(() => CheckSingleWord(users, possiblePasswordStartEndDigit));
-                    }
-                }
-            }
+        //private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
+        //{
+        //    int test = 0;
+        //    foreach (var word in WordList)
+        //    {
+        //        for (int i = 0; i < 10; i++)
+        //        {
+        //            for (int j = 0; j < 10; j++)
+        //            {
+        //                string possiblePasswordStartEndDigit = i + word + j;
+        //                Console.WriteLine($"check tal {test}");
+        //                test++;
+        //                await Task.Run(() => CheckSingleWord(users, possiblePasswordStartEndDigit));
+        //            }
+        //        }
+        //    }
 
-        }
+        //}
 
 
 

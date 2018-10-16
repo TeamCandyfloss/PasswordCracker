@@ -29,6 +29,10 @@ namespace PasswordCrackerClient
             }
         }
 
+        public void ClearEntrys()
+        {
+            _partialResult.Clear();
+        }
 
     }
 }
