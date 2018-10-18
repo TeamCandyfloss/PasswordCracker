@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using RandomNameGeneratorLibrary;
 
 namespace PasswordCrackerMaster
 {
@@ -15,7 +16,6 @@ namespace PasswordCrackerMaster
         private static bool _StartTimer;
         static void Main(string[] args)
         {
-            
             TcpListener serverSocket = new TcpListener(6789);
 
             //TcpListener serverSocket = new TcpListener(6789);

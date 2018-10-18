@@ -92,7 +92,7 @@ namespace PasswordCrackerClient
 
         void RequestWork(Cracking cracker)
         {
-            BinaryFormatter formater = new BinaryFormatter();
+            
             // sender kode 3 for mere arbejde
             streamWriter.WriteLine("3");
 
@@ -102,7 +102,7 @@ namespace PasswordCrackerClient
             string toRange = unsplitString[1];
             Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
 
-            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)formater.Deserialize(networkStream);
+            Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)_formater.Deserialize(networkStream);
 
             cracker.StartCrack($"{fromRange} {toRange}", UsersToCrack);
         }
