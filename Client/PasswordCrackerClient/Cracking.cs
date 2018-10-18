@@ -69,7 +69,7 @@ namespace PasswordCrackerClient
         {
             int test = 0;
 
-            Console.WriteLine("checknormal");
+            Console.WriteLine("CheckNormal");
             foreach (var word in WordList)
             {
                 Console.WriteLine(test);
@@ -77,56 +77,56 @@ namespace PasswordCrackerClient
                 await Task.Run(() => CheckSingleWord(users, word));
             }
 
-            Console.WriteLine("normal Done");
+            Console.WriteLine("Normal Done");
 
 
         }
 
         private async Task CheckUpperWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkupper");
+            Console.WriteLine("CheckUpper");
             foreach (var word in WordList)
             {
                // Console.WriteLine($"check upper");
                 await Task.Run(() => CheckSingleWord(users, word.ToUpper()));
             }
-            Console.WriteLine("upper Done");
+            Console.WriteLine("Upper Done");
         }
 
         private async Task CheckCapitalWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkcap");
+            Console.WriteLine("CheckCap");
             foreach (var word in WordList)
             {
                 //Console.WriteLine($"check cap");
                 string capatalizedEntry = StringUtil.Capitalize(word);
                 await Task.Run(() => CheckSingleWord(users, capatalizedEntry));
             }
-            Console.WriteLine("cap Done");
+            Console.WriteLine("Cap Done");
         }
 
         private async Task CheckReverseWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkrev");
+            Console.WriteLine("CheckRev");
             foreach (var word in WordList)
             {
                 // Console.WriteLine($"check rev");
                 string reversedEntry = StringUtil.Reverse(word);
                 await Task.Run(() => CheckSingleWord(users, reversedEntry));
             }
-            Console.WriteLine("rev Done");
+            Console.WriteLine("Rev Done");
         }
 
         private async Task CheckEndDigitWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkendigit");
+            Console.WriteLine("CheckEndDigit");
             int test = 0;
             foreach (var word in WordList)
             {
                 _wordHack3 = word;
                 Parallel.For(0, 100, EndDigitWordLoop);
             }
-            Console.WriteLine("enddigit Done");
+            Console.WriteLine("Enddigit Done");
         }
 
         private async void EndDigitWordLoop(int x)
@@ -140,7 +140,7 @@ namespace PasswordCrackerClient
         }
         private async Task CheckStartDigit(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkstartdigit");
+            Console.WriteLine("CheckStartDigit");
             int test = 0;
             foreach (var word in WordList)
             {
@@ -154,7 +154,7 @@ namespace PasswordCrackerClient
                 _wordHack = word;
                 Parallel.For(0, 100, LoopStartDigit);
             }
-            Console.WriteLine("startDigit Done");
+            Console.WriteLine("StartDigit Done");
         }
 
         private async void LoopStartDigit(int x)
@@ -171,7 +171,7 @@ namespace PasswordCrackerClient
         }
         private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkstartEnd");
+            Console.WriteLine("CheckStartEnd");
             int test = 0;
             foreach (var word in WordList)
             {
