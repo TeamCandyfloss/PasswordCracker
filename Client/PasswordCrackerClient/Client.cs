@@ -62,6 +62,15 @@ namespace PasswordCrackerClient
             streamWriter.WriteLine("1");
             
             string serverResponse = streamReader.ReadLine();
+
+            if (serverResponse == "666")
+            {
+                streamWriter.WriteLine("2");
+                _isWorking = false;
+                networkStream.Close();
+                clientSocket.Close();
+            }
+
             string[] unsplitString = serverResponse.Split(' ');
 
             Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)_formater.Deserialize(networkStream);
@@ -97,14 +106,32 @@ namespace PasswordCrackerClient
             streamWriter.WriteLine("3");
 
             string serverResponse = streamReader.ReadLine();
+            if (serverResponse == "666")
+            {
+                streamWriter.WriteLine("2");
+                _isWorking = false;
+                networkStream.Close();
+                clientSocket.Close();
+            }
             string[] unsplitString = serverResponse.Split(' ');
             string fromRange = unsplitString[0];
             string toRange = unsplitString[1];
+
+            
+
             Console.WriteLine($"Hello Agent, your range is from {fromRange} to {toRange}");
 
             Dictionary<string, string> UsersToCrack = (Dictionary<string, string>)_formater.Deserialize(networkStream);
 
-            cracker.StartCrack($"{fromRange} {toRange}", UsersToCrack);
+            Dictionary<string, string> partialResult = cracker.StartCrack($"{fromRange} {toRange}", UsersToCrack);
+            _resultManager.AddResultDic(partialResult);
+
+            if (partialResult.Keys.Count != 0)
+            {
+                SendResult();
+                partialResult.Clear();
+            }
+            RequestWork(cracker);
         }
 
         void SendResult()

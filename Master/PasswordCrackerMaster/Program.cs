@@ -13,7 +13,7 @@ namespace PasswordCrackerMaster
 {
     class Program
     {
-        private static bool _StartTimer;
+        private static bool _StartTimer = true;
         static void Main(string[] args)
         {
             TcpListener serverSocket = new TcpListener(6789);

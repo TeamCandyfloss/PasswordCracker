@@ -24,7 +24,11 @@ namespace PasswordCrackerMaster
             {
                 foreach (var kvp in partialResult)
                 {
+                    if (!_results.ContainsKey(kvp.Key))
+                    {
                     _results.Add(kvp.Key, kvp.Value);
+
+                    }
                 }
 
                 if (_results.Count == _passwords.GetHashes().Count)
@@ -38,7 +42,7 @@ namespace PasswordCrackerMaster
         {
             foreach (var kvp in _results)
             {
-                Console.WriteLine(kvp.Key, kvp.Value);
+                Console.WriteLine($"{kvp.Key}, {kvp.Value}");
             }
 
             Console.WriteLine($"Der blev fundet {_results.Count} passwords du af {_passwords.GetHashes().Count} tilgængelige hashes. på {LogHandler.Stopwatch().Elapsed} ");

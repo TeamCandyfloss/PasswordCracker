@@ -12,7 +12,10 @@ namespace PasswordCrackerClient
 
         public  void AddResultStrings(string user, string password)
         {
-            _partialResult.Add(user, password);
+            if (!_partialResult.ContainsKey(user))
+            {
+                 _partialResult.Add(user, password);
+            }
         }
 
         public  Dictionary<string, string> GetPartialResult()
@@ -24,6 +27,7 @@ namespace PasswordCrackerClient
         {
             foreach (var kvp in dic)
             {
+               
             _partialResult.Add(kvp.Key, kvp.Value);
 
             }
