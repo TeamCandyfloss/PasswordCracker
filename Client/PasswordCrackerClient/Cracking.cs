@@ -53,9 +53,12 @@ namespace PasswordCrackerClient
             Task doneUpper = CheckUpperWord(listToCrack, _UsersToCrack);
             Task doneCap = CheckCapitalWord(listToCrack, _UsersToCrack);
             Task doneReverse = CheckReverseWord(listToCrack, _UsersToCrack);
+
+
             Task doneStartDigit = CheckStartDigit(listToCrack, _UsersToCrack);
             Task doneEndDigit = CheckEndDigitWord(listToCrack, _UsersToCrack);
             Task doneStartEndDigit = CheckStartEndDigit(listToCrack, _UsersToCrack);
+
 
             Task.WaitAll(doneNormal, doneUpper, doneCap, doneReverse, doneStartDigit, doneEndDigit, doneStartEndDigit);
 
@@ -72,8 +75,8 @@ namespace PasswordCrackerClient
             Console.WriteLine("CheckNormal");
             foreach (var word in WordList)
             {
-                Console.WriteLine(test);
-                test++;
+               // Console.WriteLine(test);
+               // test++;
                 await Task.Run(() => CheckSingleWord(users, word));
             }
 
@@ -124,7 +127,7 @@ namespace PasswordCrackerClient
             foreach (var word in WordList)
             {
                 _wordHack3 = word;
-                Parallel.For(0, 100, EndDigitWordLoop);
+                await Task.Run(()=>Parallel.For(0, 100, EndDigitWordLoop));
             }
             Console.WriteLine("Enddigit Done");
         }
@@ -133,7 +136,7 @@ namespace PasswordCrackerClient
         {
             
                 string possiblePasswordEndDigit = _wordHack3 + x;
-                Console.WriteLine(possiblePasswordEndDigit);
+               // Console.WriteLine(possiblePasswordEndDigit);
                 
                 await Task.Run(() => CheckSingleWord(_UsersToCrack, possiblePasswordEndDigit));
             
@@ -152,7 +155,7 @@ namespace PasswordCrackerClient
                 //    await Task.Run(() => CheckSingleWord(users, possiblePasswordStartDigit));
                 //}
                 _wordHack = word;
-                Parallel.For(0, 100, LoopStartDigit);
+                await Task.Run(() => Parallel.For(0, 100, LoopStartDigit));
             }
             Console.WriteLine("StartDigit Done");
         }
@@ -179,7 +182,7 @@ namespace PasswordCrackerClient
                 for (int i = 0; i < 10; i++)
                 {
                     _hack1 = i;
-                    Parallel.For(0, 10, EndStartDigitLoop);
+                    await Task.Run(() => Parallel.For(0, 10, EndStartDigitLoop));
                 }
             }
             Console.WriteLine("StartEnd Done");
@@ -188,7 +191,7 @@ namespace PasswordCrackerClient
         private async void EndStartDigitLoop(int x)
         {
             string possiblePasswordStartEndDigit = _hack1 + _wordHack2 + x;
-            Console.WriteLine(possiblePasswordStartEndDigit);
+            //Console.WriteLine(possiblePasswordStartEndDigit);
             await Task.Run(() => CheckSingleWord(_UsersToCrack, possiblePasswordStartEndDigit));
         }
 
