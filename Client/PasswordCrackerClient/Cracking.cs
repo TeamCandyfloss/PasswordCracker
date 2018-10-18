@@ -17,14 +17,24 @@ namespace PasswordCrackerClient
         private string _wordHack2;
         private string _wordHack3;
 
+        // Streamwriter + path, til at oprette vores DebugLog.txt, som vil have de fleste beskeder i loggen. 
+        private StreamWriter _logWriter;
+        private string _path = @"DebugLog.txt";
+
         object _CompareLock = new object();
         private List<string> _wordList;
 
-        public Cracking( List<string> WordList)
+        public Cracking(List<string> WordList)
         {
-            
             _wordList = WordList;
             _resultManager = new ResultManager();
+
+            // DebugLog writer bliver instantieret. 
+            _logWriter = new StreamWriter(_path, true);
+            using (_logWriter)
+            {
+                _logWriter.WriteLine("--------------CRACKING STARTED--------------");
+            }
         }
 
         public Dictionary<string, string> StartCrack(string interval, Dictionary<string, string> UsersToCrack)
@@ -32,7 +42,7 @@ namespace PasswordCrackerClient
             _resultManager.ClearEntrys();
             _UsersToCrack = UsersToCrack;
             _interval = interval.Split(' ');
-           
+            
 
             // nød til at lave en ny interval variable til GetRange metoden på listen, Se metode beskrivelse.
            
@@ -67,81 +77,107 @@ namespace PasswordCrackerClient
 
         private async Task CheckNormalWord(List<string> WordList, Dictionary<string, string> users)
         {
-            int test = 0;
-
-            Console.WriteLine("checknormal");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for normal words.");
+            }
+                
             foreach (var word in WordList)
             {
-                Console.WriteLine(test);
-                test++;
                 await Task.Run(() => CheckSingleWord(users, word));
             }
 
-            Console.WriteLine("normal Done");
-
-
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for normal words.");
+            }
         }
 
         private async Task CheckUpperWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkupper");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for Uppercased words.");
+            }
+                
             foreach (var word in WordList)
             {
-               // Console.WriteLine($"check upper");
                 await Task.Run(() => CheckSingleWord(users, word.ToUpper()));
             }
-            Console.WriteLine("upper Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for uppercased words.");
+            }
         }
 
         private async Task CheckCapitalWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkcap");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for capitalized words.");
+            }
+                
             foreach (var word in WordList)
             {
-                //Console.WriteLine($"check cap");
                 string capatalizedEntry = StringUtil.Capitalize(word);
                 await Task.Run(() => CheckSingleWord(users, capatalizedEntry));
             }
-            Console.WriteLine("cap Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for capitalized words.");
+            }
         }
 
         private async Task CheckReverseWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkrev");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking reverse words.");
+            }
+                
             foreach (var word in WordList)
             {
-                // Console.WriteLine($"check rev");
                 string reversedEntry = StringUtil.Reverse(word);
                 await Task.Run(() => CheckSingleWord(users, reversedEntry));
             }
-            Console.WriteLine("rev Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking reverse words.");
+            }
         }
 
         private async Task CheckEndDigitWord(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkendigit");
-            int test = 0;
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for end digits.");
+            }
             foreach (var word in WordList)
             {
                 _wordHack3 = word;
                 Parallel.For(0, 100, EndDigitWordLoop);
             }
-            Console.WriteLine("enddigit Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for end digits.");
+            }
         }
 
         private async void EndDigitWordLoop(int x)
         {
             
                 string possiblePasswordEndDigit = _wordHack3 + x;
-                Console.WriteLine(possiblePasswordEndDigit);
                 
                 await Task.Run(() => CheckSingleWord(_UsersToCrack, possiblePasswordEndDigit));
             
         }
         private async Task CheckStartDigit(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkstartdigit");
-            int test = 0;
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for start digits.");
+            }
+                
             foreach (var word in WordList)
             {
                 //for (int i = 0; i < 100; i++)
@@ -154,25 +190,30 @@ namespace PasswordCrackerClient
                 _wordHack = word;
                 Parallel.For(0, 100, LoopStartDigit);
             }
-            Console.WriteLine("startDigit Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for start digits.");
+            }
+                
         }
 
         private async void LoopStartDigit(int x)
         {
             //super hacky cowboy kode.
-            int test = 0;
            
                 string possiblePasswordStartDigit = x + _wordHack;
                 await Task.Run(() => CheckSingleWord(_UsersToCrack, possiblePasswordStartDigit));
-            test++;
 
 
 
         }
         private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
         {
-            Console.WriteLine("checkstartEnd");
-            int test = 0;
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Checking for start AND end digits.");
+            }
+                
             foreach (var word in WordList)
             {
                 _wordHack2 = word;
@@ -182,13 +223,15 @@ namespace PasswordCrackerClient
                     Parallel.For(0, 10, EndStartDigitLoop);
                 }
             }
-            Console.WriteLine("StartEnd Done");
+            using (_logWriter)
+            {
+                _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for start and end digits.");
+            }
         }
 
         private async void EndStartDigitLoop(int x)
         {
             string possiblePasswordStartEndDigit = _hack1 + _wordHack2 + x;
-            Console.WriteLine(possiblePasswordStartEndDigit);
             await Task.Run(() => CheckSingleWord(_UsersToCrack, possiblePasswordStartEndDigit));
         }
 
