@@ -30,8 +30,7 @@ namespace PasswordCrackerMaster
                     LogHandler.StartStopWatch();
                     _StartTimer = false;
                 }
-               
-
+              
             }
 
 
