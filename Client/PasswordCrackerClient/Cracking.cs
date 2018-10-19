@@ -150,7 +150,7 @@ namespace PasswordCrackerClient
             foreach (var word in WordList)
             {
                 _wordHack3 = word;
-                Parallel.For(0, 100, EndDigitWordLoop);
+                await Task.Run(() => Parallel.For(0, 100, EndDigitWordLoop));
             }
 
             _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for end digits.");
@@ -199,7 +199,7 @@ namespace PasswordCrackerClient
                 //    await Task.Run(() => CheckSingleWord(users, possiblePasswordStartDigit));
                 //}
                 _wordHack = word;
-                Parallel.For(0, 100, LoopStartDigit);
+                await Task.Run(() => Parallel.For(0, 100, LoopStartDigit));
             }
 
             _logWriter.WriteLine($"Log {DateTime.Now} - Done checking for start digits.");
@@ -227,9 +227,7 @@ namespace PasswordCrackerClient
                     Console.WriteLine($"Log {DateTime.Now} - 75% Done Start Digits");
                     break;
             }
-
-
-
+            
         }
         private async Task CheckStartEndDigit(List<string> WordList, Dictionary<string, string> users)
         {
@@ -243,7 +241,7 @@ namespace PasswordCrackerClient
                 for (int i = 0; i < 10; i++)
                 {
                     _hack1 = i;
-                    Parallel.For(0, 10, EndStartDigitLoop);
+                    await Task.Run(() => Parallel.For(0, 10, EndStartDigitLoop));
                 }
             }
 
